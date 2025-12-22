@@ -47,7 +47,7 @@ public class SecurityConfig {
             )
             .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
-    }// Add to SecurityConfig constructor/bean:
+    }
 @Bean
 public ServletRegistrationBean<SimpleStatusServlet> statusServlet() {
     ServletRegistrationBean<SimpleStatusServlet> bean = new ServletRegistrationBean<>(new SimpleStatusServlet(), "/status");
