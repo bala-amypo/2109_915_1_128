@@ -27,4 +27,9 @@ public class InvestorProfileController {
             @RequestParam boolean active) {
         return service.updateInvestorStatus(id, active);
     }
+    @PostMapping
+public InvestorProfile createInvestor(@RequestBody InvestorProfile investor) {
+    return service.createInvestor(investor);
+}
+
 }
