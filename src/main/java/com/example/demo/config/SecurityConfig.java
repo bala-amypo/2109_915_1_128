@@ -2,8 +2,6 @@ package com.example.demo.config;
 
 import com.example.demo.security.JwtAuthenticationFilter;
 import com.example.demo.security.CustomUserDetailsService;
-import com.example.demo.servlet.SimpleStatusServlet;
-import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -44,16 +42,10 @@ public class SecurityConfig {
         http.csrf(csrf -> csrf.disable())
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/auth/**", "/swagger-ui/**", "/v3/api-docs/**", "/status", "/h2-console/**").permitAll()
-                .requestMatchers("/api/**").authenticated()
+                .requestMatchers("/auth/**", "/swagger-ui/**", "/v3/api-docs/**", "/h2-console/**").permitAll()
                 .anyRequest().authenticated()
             )
             .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
-    }
-
-    @Bean
-    public ServletRegistrationBean<SimpleStatusServlet> statusServlet() {
-        return new ServletRegistrationBean<>(new SimpleStatusServlet(), "/status");
     }
 }
