@@ -25,4 +25,10 @@ public class RebalancingAlertController {
     public RebalancingAlertRecord resolveAlert(@PathVariable Long id) {
         return service.resolveAlert(id);
     }
+    @PostMapping
+public RebalancingAlertRecord createAlert(
+        @RequestBody RebalancingAlertRecord alert) {
+    return service.createAlert(alert);
+}
+
 }

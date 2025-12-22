@@ -27,4 +27,12 @@ public class InvestorProfileServiceImpl implements InvestorProfileService {
         investor.setActive(active);
         return repository.save(investor);
     }
+    @Override
+public InvestorProfile createInvestor(InvestorProfile investor) {
+    if (investor.getActive() == null) {
+        investor.setActive(true);
+    }
+    return repository.save(investor);
+}
+
 }
