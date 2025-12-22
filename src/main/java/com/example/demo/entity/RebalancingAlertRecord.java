@@ -3,13 +3,11 @@ package com.example.demo.entity;
 import com.example.demo.entity.enums.AlertSeverity;
 import com.example.demo.entity.enums.AssetClassType;
 import jakarta.persistence.*;
-
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "rebalancing_alert_records")
+@Table(name = "rebalancing_alerts")
 public class RebalancingAlertRecord {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -18,7 +16,6 @@ public class RebalancingAlertRecord {
     private Long investorId;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
     private AssetClassType assetClass;
 
     @Column(nullable = false)
@@ -28,42 +25,18 @@ public class RebalancingAlertRecord {
     private Double targetPercentage;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
     private AlertSeverity severity;
 
-    @Column(nullable = false)
     private String message;
 
     @Column(nullable = false)
-    private LocalDateTime alertDate;
+    private LocalDateTime alertDate = LocalDateTime.now();
 
     @Column(nullable = false)
     private Boolean resolved = false;
 
-    @PrePersist
-    public void prePersist() {
-        if (resolved == null) {
-            resolved = false;
-        }
-    }
-
-    public void setCurrentPercentage(Double currentPercentage) {
-        this.currentPercentage = currentPercentage;
-        validatePercentages();
-    }
-
-    public void setTargetPercentage(Double targetPercentage) {
-        this.targetPercentage = targetPercentage;
-        validatePercentages();
-    }
-
-    private void validatePercentages() {
-        if (currentPercentage != null && targetPercentage != null) {
-            if (!(currentPercentage > targetPercentage)) {
-                throw new IllegalArgumentException("currentPercentage > targetPercentage");
-            }
-        }
-    }
+    // constructors, getters, setters
+    public RebalancingAlertRecord() {}
 
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
@@ -75,7 +48,10 @@ public class RebalancingAlertRecord {
     public void setAssetClass(AssetClassType assetClass) { this.assetClass = assetClass; }
 
     public Double getCurrentPercentage() { return currentPercentage; }
+    public void setCurrentPercentage(Double currentPercentage) { this.currentPercentage = currentPercentage; }
+
     public Double getTargetPercentage() { return targetPercentage; }
+    public void setTargetPercentage(Double targetPercentage) { this.targetPercentage = targetPercentage; }
 
     public AlertSeverity getSeverity() { return severity; }
     public void setSeverity(AlertSeverity severity) { this.severity = severity; }

@@ -1,13 +1,11 @@
 package com.example.demo.entity;
 
 import jakarta.persistence.*;
-
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "allocation_snapshot_records")
+@Table(name = "allocation_snapshots")
 public class AllocationSnapshotRecord {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -16,21 +14,16 @@ public class AllocationSnapshotRecord {
     private Long investorId;
 
     @Column(nullable = false)
-    private LocalDateTime snapshotDate;
+    private LocalDateTime snapshotDate = LocalDateTime.now();
 
     @Column(nullable = false)
     private Double totalPortfolioValue;
 
-    @Lob
-    @Column(nullable = false)
+    @Column(columnDefinition = "TEXT")
     private String allocationJson;
 
-    public void setTotalPortfolioValue(Double totalPortfolioValue) {
-        if (totalPortfolioValue == null || totalPortfolioValue <= 0.0) {
-            throw new IllegalArgumentException("totalPortfolioValue must be > 0");
-        }
-        this.totalPortfolioValue = totalPortfolioValue;
-    }
+    // constructors, getters, setters
+    public AllocationSnapshotRecord() {}
 
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
@@ -42,6 +35,7 @@ public class AllocationSnapshotRecord {
     public void setSnapshotDate(LocalDateTime snapshotDate) { this.snapshotDate = snapshotDate; }
 
     public Double getTotalPortfolioValue() { return totalPortfolioValue; }
+    public void setTotalPortfolioValue(Double totalPortfolioValue) { this.totalPortfolioValue = totalPortfolioValue; }
 
     public String getAllocationJson() { return allocationJson; }
     public void setAllocationJson(String allocationJson) { this.allocationJson = allocationJson; }
