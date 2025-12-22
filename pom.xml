@@ -19,13 +19,7 @@
     </properties>
     
     <dependencies>
-        <!-- ADD to pom.xml dependencies -->
-<dependency>
-    <groupId>com.h2database</groupId>
-    <artifactId>h2</artifactId>
-    <scope>runtime</scope>
-</dependency>
-
+        
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
@@ -62,12 +56,13 @@
             <scope>runtime</scope>
         </dependency>
         
-        <!-- H2 Database -->
+       
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
             <scope>runtime</scope>
         </dependency>
+
         
         <!-- Swagger -->
         <dependency>
