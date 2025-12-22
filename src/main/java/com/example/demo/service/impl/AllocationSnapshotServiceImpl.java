@@ -61,10 +61,10 @@ public class AllocationSnapshotServiceImpl implements AllocationSnapshotService 
     }
 
     private void createAlerts(Long investorId, Map<AssetClassType, Double> allocations) {
-        // dummy alert creation
+        
     }
 
-    // other methods return dummy data
+    
     @Override
     public AllocationSnapshotRecord getSnapshotById(Long id) {
         return snapshotRepo.findById(id).orElseThrow(() -> new ResourceNotFoundException("Snapshot not found"));
