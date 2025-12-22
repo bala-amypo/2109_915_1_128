@@ -2,17 +2,14 @@ package com.example.demo.entity;
 
 import com.example.demo.entity.enums.RoleType;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
 
 @Entity
-@Table(
-    name = "user_accounts",
-    uniqueConstraints = {
-        @UniqueConstraint(columnNames = "username"),
-        @UniqueConstraint(columnNames = "email")
-    }
-)
+@Table(name = "user_accounts", uniqueConstraints = {
+    @UniqueConstraint(columnNames = "username"),
+    @UniqueConstraint(columnNames = "email")
+})
 public class UserAccount {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -20,6 +17,7 @@ public class UserAccount {
     @Column(nullable = false, unique = true)
     private String username;
 
+    @Email
     @Column(nullable = false, unique = true)
     private String email;
 
@@ -28,10 +26,12 @@ public class UserAccount {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private RoleType role;
+    private RoleType role = RoleType.INVESTOR;
 
     @Column(nullable = false)
     private Boolean active = true;
+
+    public UserAccount() {}
 
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
