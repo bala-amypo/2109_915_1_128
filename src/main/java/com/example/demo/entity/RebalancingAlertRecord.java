@@ -35,7 +35,7 @@ public class RebalancingAlertRecord {
     @Column(nullable = false)
     private Boolean resolved = false;
 
-    // constructors, getters, setters
+
     public RebalancingAlertRecord() {}
 
     public Long getId() { return id; }
