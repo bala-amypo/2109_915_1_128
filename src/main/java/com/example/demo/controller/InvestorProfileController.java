@@ -14,15 +14,15 @@ src/main/java/com/example/demo
 │       └── 
 │
 ├── repository
-│   ├── InvestorProfileRepository.java
-│   └── RebalancingAlertRecordRepository.java
+│   ├── 
+│   └── 
 │
 ├── service
-│   ├── InvestorProfileService.java
-│   ├── RebalancingAlertService.java
+│   ├── 
+│   ├── 
 │   └── impl
-│       ├── InvestorProfileServiceImpl.java
-│       └── RebalancingAlertServiceImpl.java
+│       ├── 
+│       └── 
 │
 └── exception
     └── ResourceNotFoundException.java
