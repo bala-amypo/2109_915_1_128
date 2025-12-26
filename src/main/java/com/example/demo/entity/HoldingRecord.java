@@ -21,8 +21,10 @@ public class HoldingRecord {
 
     public HoldingRecord() {}
 
-    public HoldingRecord(Long investorId, AssetClassType assetClass,
-                         Double currentValue, LocalDateTime snapshotDate) {
+    public HoldingRecord(Long investorId,
+                         AssetClassType assetClass,
+                         Double currentValue,
+                         LocalDateTime snapshotDate) {
         if (currentValue <= 0) {
             throw new IllegalArgumentException("currentValue must be > 0");
         }
@@ -32,5 +34,10 @@ public class HoldingRecord {
         this.snapshotDate = snapshotDate;
     }
 
-    // getters and setters
+    public Long getId() { return id; }
+    public Long getInvestorId() { return investorId; }
+    public AssetClassType getAssetClass() { return assetClass; }
+    public Double getCurrentValue() { return currentValue; }
+
+    public void setId(Long id) { this.id = id; }
 }

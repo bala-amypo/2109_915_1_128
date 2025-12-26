@@ -20,10 +20,12 @@ public class AssetClassAllocationRule {
 
     public AssetClassAllocationRule() {}
 
-    public AssetClassAllocationRule(Long investorId, AssetClassType assetClass,
-                                    Double targetPercentage, Boolean active) {
+    public AssetClassAllocationRule(Long investorId,
+                                    AssetClassType assetClass,
+                                    Double targetPercentage,
+                                    Boolean active) {
         if (targetPercentage < 0 || targetPercentage > 100) {
-            throw new IllegalArgumentException("targetPercentage must be between 0 and 100");
+            throw new IllegalArgumentException("between 0 and 100");
         }
         this.investorId = investorId;
         this.assetClass = assetClass;
@@ -31,5 +33,10 @@ public class AssetClassAllocationRule {
         this.active = active;
     }
 
-    // getters and setters
+    public Long getInvestorId() { return investorId; }
+    public AssetClassType getAssetClass() { return assetClass; }
+    public Double getTargetPercentage() { return targetPercentage; }
+    public Boolean getActive() { return active; }
+
+    public void setId(Long id) { this.id = id; }
 }

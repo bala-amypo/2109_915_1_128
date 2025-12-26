@@ -28,10 +28,14 @@ public class RebalancingAlertRecord {
 
     public RebalancingAlertRecord() {}
 
-    public RebalancingAlertRecord(Long investorId, AssetClassType assetClass,
-                                  Double currentPercentage, Double targetPercentage,
-                                  AlertSeverity severity, String message,
-                                  LocalDateTime alertDate, Boolean resolved) {
+    public RebalancingAlertRecord(Long investorId,
+                                  AssetClassType assetClass,
+                                  Double currentPercentage,
+                                  Double targetPercentage,
+                                  AlertSeverity severity,
+                                  String message,
+                                  LocalDateTime alertDate,
+                                  Boolean resolved) {
         if (currentPercentage <= targetPercentage) {
             throw new IllegalArgumentException("currentPercentage > targetPercentage");
         }
@@ -45,5 +49,10 @@ public class RebalancingAlertRecord {
         this.resolved = resolved;
     }
 
-    // getters and setters
+    public Double getCurrentPercentage() { return currentPercentage; }
+    public Double getTargetPercentage() { return targetPercentage; }
+    public Boolean getResolved() { return resolved; }
+
+    public void setResolved(Boolean resolved) { this.resolved = resolved; }
+    public void setId(Long id) { this.id = id; }
 }
