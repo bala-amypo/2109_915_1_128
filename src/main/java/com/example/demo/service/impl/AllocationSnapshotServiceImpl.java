@@ -18,87 +18,92 @@ import java.util.stream.Collectors;
 public class AllocationSnapshotServiceImpl implements AllocationSnapshotService {
 
     private final AllocationSnapshotRecordRepository snapshotRecordRepository;
-    private final HoldingRecordRepository holdingRecordRepository;
-    private final AssetClassAllocationRuleRepository allocationRuleRepository;
-    private final RebalancingAlertRecordRepository alertRecordRepository;
+private final HoldingRecordRepository holdingRecordRepository;
+private final AssetClassAllocationRuleRepository allocationRuleRepository;
+private final RebalancingAlertRecordRepository alertRecordRepository;
 
-   public AllocationSnapshotServiceImpl(
-    AllocationSnapshotRecordRepository snapshotRecordRepository,     // 0
-    HoldingRecordRepository holdingRecordRepository,                 // 1  
-    AssetClassAllocationRuleRepository allocationRuleRepository,     // 2
-    RebalancingAlertRecordRepository alertRecordRepository           // 3
-) { 
-
-        this.snapshotRecordRepository = snapshotRecordRepository;
-        this.holdingRecordRepository = holdingRecordRepository;
-        this.allocationRuleRepository = allocationRuleRepository;
-        this.alertRecordRepository = alertRecordRepository;
-    }
-
-    @Override
-    public AllocationSnapshotRecord computeSnapshot(Long investorId) {
-        List<HoldingRecord> holdings = holdingRecordRepository.findByInvestorId(investorId);
-        if (holdings.isEmpty()) {
-            throw new IllegalArgumentException("No holdings found for investor");
-        }
-
-        double totalValue = holdings.stream().mapToDouble(h -> h.getCurrentValue()).sum();
-        if (totalValue <= 0) {
-            throw new IllegalArgumentException("Total portfolio value must be > 0");
-        }
-
-        Map<AssetClassType, Double> allocationMap = holdings.stream()
-                .collect(Collectors.groupingBy(
-                    HoldingRecord::getAssetClass,
-                    Collectors.summingDouble(h -> h.getCurrentValue())
-                ));
-
-        ObjectMapper mapper = new ObjectMapper();
-        String allocationJson;
-        try {
-            allocationJson = mapper.writeValueAsString(allocationMap);
-        } catch (Exception e) {
-            allocationJson = "{}";
-        }
-
-        AllocationSnapshotRecord snapshot = new AllocationSnapshotRecord(
-                investorId, LocalDateTime.now(), totalValue, allocationJson
-        );
-        snapshotRecordRepository.save(snapshot);
-
-        // Check for rebalancing alerts
-        List<AssetClassAllocationRule> activeRules = allocationRuleRepository.findActiveRulesHql(investorId);
-
-        for (AssetClassAllocationRule rule : rules) {
-            AssetClassType assetClass = rule.getAssetClass();
-            double currentValue = allocationMap.getOrDefault(assetClass, 0.0);
-            double currentPercentage = totalValue > 0 ? (currentValue / totalValue) * 100 : 0;
-            
-            if (currentPercentage > rule.getTargetPercentage()) {
-                RebalancingAlertRecord alert = new RebalancingAlertRecord(
-                        investorId, assetClass, currentPercentage, rule.getTargetPercentage(),
-                        AlertSeverity.MEDIUM, "Rebalancing needed", LocalDateTime.now(), false
-                );
-                alertRecordRepository.save(alert);
-            }
-        }
-
-        return snapshot;
-    }
-
-    @Override
-    public AllocationSnapshotRecord getSnapshotById(Long id) {
-        return snapshotRecordRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Snapshot not found with id: " + id));
-    }
-
-    @Override
-    public List<AllocationSnapshotRecord> getSnapshotsByInvestor(Long investorId) {
-        return snapshotRecordRepository.findByInvestorId(investorId);
-    }
-
-    @Override
-    public List<AllocationSnapshotRecord> getAllSnapshots() {
-        return snapshotRecordRepository.findAll();
-    }
+public AllocationSnapshotServiceImpl(
+        AllocationSnapshotRecordRepository snapshotRecordRepository,
+        HoldingRecordRepository holdingRecordRepository,
+        AssetClassAllocationRuleRepository allocationRuleRepository,
+        RebalancingAlertRecordRepository alertRecordRepository) {
+    this.snapshotRecordRepository = snapshotRecordRepository;
+    this.holdingRecordRepository = holdingRecordRepository;
+    this.allocationRuleRepository = allocationRuleRepository;
+    this.alertRecordRepository = alertRecordRepository;
 }
+
+
+    @Override
+public AllocationSnapshotRecord computeSnapshot(Long investorId) {
+    // Fetch holdings
+    List<HoldingRecord> holdings = holdingRecordRepository.findByInvestorId(investorId);
+    if (holdings.isEmpty()) {
+        throw new IllegalArgumentException("No holdings found for investor: " + investorId);
+    }
+    
+    // Calculate total portfolio value
+    double totalPortfolioValue = holdings.stream()
+            .mapToDouble(HoldingRecord::getCurrentValue)
+            .sum();
+    
+    if (totalPortfolioValue <= 0) {
+        throw new IllegalArgumentException("Total portfolio value must be > 0");
+    }
+    
+    // Calculate current percentages per asset class
+    Map<AssetClassType, Double> currentAllocations = new HashMap<>();
+    for (HoldingRecord holding : holdings) {
+        double percentage = (holding.getCurrentValue() / totalPortfolioValue) * 100;
+        currentAllocations.put(holding.getAssetClass(), percentage);
+    }
+    
+    // Get active rules
+    List<AssetClassAllocationRule> activeRules = allocationRuleRepository.findActiveRulesHql(investorId);
+    
+    // Create allocation JSON
+    ObjectMapper objectMapper = new ObjectMapper();
+    String allocationJson;
+    try {
+        allocationJson = objectMapper.writeValueAsString(currentAllocations);
+    } catch (Exception e) {
+        allocationJson = "{}";
+    }
+    
+    // Create snapshot
+    AllocationSnapshotRecord snapshot = new AllocationSnapshotRecord(
+            investorId, 
+            LocalDateTime.now(), 
+            totalPortfolioValue, 
+            allocationJson
+    );
+    AllocationSnapshotRecord savedSnapshot = snapshotRecordRepository.save(snapshot);
+    
+    // Create alerts for deviations
+    for (AssetClassAllocationRule rule : activeRules) {
+        AssetClassType assetClass = rule.getAssetClass();
+        Double currentPercentage = currentAllocations.getOrDefault(assetClass, 0.0);
+        Double targetPercentage = rule.getTargetPercentage();
+        
+        if (currentPercentage > targetPercentage) {
+            AlertSeverity severity = determineSeverity(currentPercentage - targetPercentage);
+            String message = String.format("Asset %s exceeded target: %.1f%% vs %.1f%%", 
+                    assetClass, currentPercentage, targetPercentage);
+            
+            RebalancingAlertRecord alert = new RebalancingAlertRecord(
+                    investorId, assetClass, currentPercentage, targetPercentage,
+                    severity, message, LocalDateTime.now(), false
+            );
+            alertRecordRepository.save(alert);
+        }
+    }
+    
+    return savedSnapshot;
+}
+
+private AlertSeverity determineSeverity(double deviation) {
+    if (deviation > 20) return AlertSeverity.HIGH;
+    if (deviation > 10) return AlertSeverity.MEDIUM;
+    return AlertSeverity.LOW;
+}
+
