@@ -16,7 +16,12 @@ public class HoldingRecord {
     @Enumerated(EnumType.STRING)
     private AssetClassType assetClass;
 
-    private Double currentValue;
+    private double currentValue;
+
+public double getCurrentValue() {
+    return currentValue;
+}
+
     private LocalDateTime snapshotDate;
 
     public HoldingRecord() {}
