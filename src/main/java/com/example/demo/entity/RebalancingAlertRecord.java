@@ -36,7 +36,7 @@ public class RebalancingAlertRecord {
     private LocalDateTime alertDate = LocalDateTime.now();
     
     @Column(nullable = false)
-    private boolean resolved = false;
+    private Boolean resolved = false; 
 
     public RebalancingAlertRecord() {}
 

@@ -23,7 +23,7 @@ public class InvestorProfile {
     private String email;
     
     @Column(nullable = false)
-    private boolean active = true;
+    private Boolean active = true; 
     
     @Column(name = "created_at")
     private LocalDateTime createdAt = LocalDateTime.now();
