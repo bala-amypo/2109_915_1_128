@@ -1,6 +1,6 @@
 package com.example.demo.entity;
 
-import com.example.demo.entity.enums.AssetClass;
+import com.example.demo.entity.enums.AssetClassType;
 import jakarta.persistence.*;
 
 @Entity
@@ -13,21 +13,19 @@ public class HoldingRecord {
     private Long investorId;
 
     @Enumerated(EnumType.STRING)
-    private AssetClass assetClass;
+    private AssetClassType assetClass;
 
     private double currentValue;
 
-    // ===== Constructors =====
     public HoldingRecord() {
     }
 
-    public HoldingRecord(Long investorId, AssetClass assetClass, double currentValue) {
+    public HoldingRecord(Long investorId, AssetClassType assetClass, double currentValue) {
         this.investorId = investorId;
         this.assetClass = assetClass;
         this.currentValue = currentValue;
     }
 
-    // ===== Getters & Setters =====
     public Long getId() {
         return id;
     }
@@ -40,11 +38,11 @@ public class HoldingRecord {
         this.investorId = investorId;
     }
 
-    public AssetClass getAssetClass() {
+    public AssetClassType getAssetClass() {
         return assetClass;
     }
 
-    public void setAssetClass(AssetClass assetClass) {
+    public void setAssetClass(AssetClassType assetClass) {
         this.assetClass = assetClass;
     }
 
