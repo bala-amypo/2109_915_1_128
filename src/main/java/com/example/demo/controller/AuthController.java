@@ -4,7 +4,7 @@ import com.example.demo.dto.AuthRequest;
 import com.example.demo.dto.AuthResponse;
 import com.example.demo.dto.RegisterRequest;
 import com.example.demo.entity.UserAccount;
-import com.example.demo.security.JwtUtil;
+import com.example.demo.security.JwtTokenProvider;
 import com.example.demo.service.UserAccountService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -17,14 +17,14 @@ import org.springframework.web.bind.annotation.*;
 public class AuthController {
 
     private final AuthenticationManager authenticationManager;
-    private final JwtUtil jwtUtil;
+    private final JwtTokenProvider jwtTokenProvider;
     private final UserAccountService userAccountService;
 
     public AuthController(AuthenticationManager authenticationManager, 
-                         JwtUtil jwtUtil, 
+                         JwtTokenProvider jwtTokenProvider, 
                          UserAccountService userAccountService) {
         this.authenticationManager = authenticationManager;
-        this.jwtUtil = jwtUtil;
+        this.jwtTokenProvider = jwtTokenProvider;
         this.userAccountService = userAccountService;
     }
 
@@ -35,14 +35,14 @@ public class AuthController {
         );
         UserAccount user = userAccountService.findByEmail(request.getEmail())
             .orElseThrow(() -> new RuntimeException("User not found"));
-        String token = jwtUtil.generateToken(authentication, user);
+        String token = jwtTokenProvider.generateToken(authentication, user);
         return ResponseEntity.ok(new AuthResponse(token, user.getId(), user.getEmail(), user.getRole().name()));
     }
 
     @PostMapping("/register")
     public ResponseEntity<AuthResponse> register(@RequestBody RegisterRequest request) {
         UserAccount user = userAccountService.register(request);
-        String token = jwtUtil.generateToken(null, user); // Token after registration
+        String token = jwtTokenProvider.generateToken(null, user);
         return ResponseEntity.ok(new AuthResponse(token, user.getId(), user.getEmail(), user.getRole().name()));
     }
 }
