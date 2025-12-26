@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/snapshots")
@@ -28,16 +29,16 @@ public class AllocationSnapshotController {
     }
 
     @GetMapping("/{id}")
-public ResponseEntity<AllocationSnapshotRecord> getById(@PathVariable Long id) {
-    Optional<AllocationSnapshotRecord> snapshot = allocationSnapshotService.getSnapshotById(id).map(Optional::of);
-    return snapshot.map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
-}
+    public ResponseEntity<AllocationSnapshotRecord> getById(@PathVariable Long id) {
+        try {
+            return ResponseEntity.ok(allocationSnapshotService.getSnapshotById(id));
+        } catch (Exception e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
 
-
-    @GetMapping("/{id}")
-public ResponseEntity<RebalancingAlertRecord> getById(@PathVariable Long id) {
-    Optional<RebalancingAlertRecord> alert = rebalancingAlertService.getAlertById(id).map(Optional::of);
-    return alert.map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
-}
-
+    @GetMapping
+    public ResponseEntity<List<AllocationSnapshotRecord>> getAll() {
+        return ResponseEntity.ok(allocationSnapshotService.getAllSnapshots());
+    }
 }

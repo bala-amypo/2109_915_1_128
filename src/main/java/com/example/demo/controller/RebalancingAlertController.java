@@ -34,9 +34,11 @@ public class RebalancingAlertController {
 
     @GetMapping("/{id}")
     public ResponseEntity<RebalancingAlertRecord> getById(@PathVariable Long id) {
-        return rebalancingAlertService.getAlertById(id)
-            .map(ResponseEntity::ok)
-            .orElse(ResponseEntity.notFound().build());
+        try {
+            return ResponseEntity.ok(rebalancingAlertService.getAlertById(id));
+        } catch (Exception e) {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @GetMapping
