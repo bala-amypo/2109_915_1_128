@@ -20,8 +20,9 @@ public class RebalancingAlertServiceImpl implements RebalancingAlertService {
     @Override
     public RebalancingAlertRecord createAlert(RebalancingAlertRecord alert) {
         if (alert.getCurrentPercentage() <= alert.getTargetPercentage()) {
-            throw new IllegalArgumentException("currentPercentage must be > targetPercentage");
+    throw new IllegalArgumentException("currentPercentage > targetPercentage required for alert");
         }
+
         alert.setResolved(false); // Default
         return alertRecordRepository.save(alert);
     }

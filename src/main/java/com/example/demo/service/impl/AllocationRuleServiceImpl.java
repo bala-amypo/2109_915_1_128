@@ -55,8 +55,9 @@ public class AllocationRuleServiceImpl implements AllocationRuleService {
     }
 
     private void validatePercentage(Double percentage) {
-        if (percentage == null || percentage < 0 || percentage > 100) {
-            throw new IllegalArgumentException("targetPercentage must be between 0 and 100");
+        if (rule.getTargetPercentage() < 0 || rule.getTargetPercentage() > 100) {
+    throw new IllegalArgumentException("Target percentage must be between 0 and 100");
         }
+
     }
 }

@@ -22,11 +22,13 @@ public class AllocationSnapshotServiceImpl implements AllocationSnapshotService 
     private final AssetClassAllocationRuleRepository allocationRuleRepository;
     private final RebalancingAlertRecordRepository alertRecordRepository;
 
-    public AllocationSnapshotServiceImpl(
-            AllocationSnapshotRecordRepository snapshotRecordRepository,
-            HoldingRecordRepository holdingRecordRepository,
-            AssetClassAllocationRuleRepository allocationRuleRepository,
-            RebalancingAlertRecordRepository alertRecordRepository) {
+   public AllocationSnapshotServiceImpl(
+    AllocationSnapshotRecordRepository snapshotRecordRepository,     // 0
+    HoldingRecordRepository holdingRecordRepository,                 // 1  
+    AssetClassAllocationRuleRepository allocationRuleRepository,     // 2
+    RebalancingAlertRecordRepository alertRecordRepository           // 3
+) { 
+
         this.snapshotRecordRepository = snapshotRecordRepository;
         this.holdingRecordRepository = holdingRecordRepository;
         this.allocationRuleRepository = allocationRuleRepository;
