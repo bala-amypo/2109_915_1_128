@@ -6,6 +6,8 @@ import com.example.demo.repository.RebalancingAlertRecordRepository;
 import com.example.demo.service.RebalancingAlertService;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class RebalancingAlertServiceImpl implements RebalancingAlertService {
 
@@ -16,9 +18,8 @@ public class RebalancingAlertServiceImpl implements RebalancingAlertService {
     }
 
     @Override
-    public RebalancingAlertRecord getAlertById(Long id) {
-        return repository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Alert not found"));
+    public RebalancingAlertRecord createAlert(RebalancingAlertRecord alert) {
+        return repository.save(alert);
     }
 
     @Override
@@ -27,20 +28,21 @@ public class RebalancingAlertServiceImpl implements RebalancingAlertService {
         alert.setResolved(true);
         return repository.save(alert);
     }
+
     @Override
-public RebalancingAlertRecord createAlert(RebalancingAlertRecord alert) {
-
-    if (alert.getCurrentPercentage() <= alert.getTargetPercentage()) {
-        throw new IllegalArgumentException(
-            "currentPercentage > targetPercentage"
-        );
+    public RebalancingAlertRecord getAlertById(Long id) {
+        return repository.findById(id)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("Alert not found " + id));
     }
 
-    if (alert.getResolved() == null) {
-        alert.setResolved(false);
+    @Override
+    public List<RebalancingAlertRecord> getAlertsByInvestor(Long investorId) {
+        return repository.findByInvestorId(investorId);
     }
 
-    return repository.save(alert);
-}
-
+    @Override
+    public List<RebalancingAlertRecord> getAllAlerts() {
+        return repository.findAll();
+    }
 }
