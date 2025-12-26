@@ -28,14 +28,16 @@ public class AllocationSnapshotController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<AllocationSnapshotRecord> getById(@PathVariable Long id) {
-        return allocationSnapshotService.getSnapshotById(id)
-            .map(ResponseEntity::ok)
-            .orElse(ResponseEntity.notFound().build());
-    }
+public ResponseEntity<AllocationSnapshotRecord> getById(@PathVariable Long id) {
+    Optional<AllocationSnapshotRecord> snapshot = allocationSnapshotService.getSnapshotById(id).map(Optional::of);
+    return snapshot.map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
+}
 
-    @GetMapping
-    public ResponseEntity<List<AllocationSnapshotRecord>> getAll() {
-        return ResponseEntity.ok(allocationSnapshotService.getAllSnapshots());
-    }
+
+    @GetMapping("/{id}")
+public ResponseEntity<RebalancingAlertRecord> getById(@PathVariable Long id) {
+    Optional<RebalancingAlertRecord> alert = rebalancingAlertService.getAlertById(id).map(Optional::of);
+    return alert.map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
+}
+
 }
