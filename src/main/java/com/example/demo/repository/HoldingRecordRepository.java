@@ -11,7 +11,6 @@ public interface HoldingRecordRepository extends JpaRepository<HoldingRecord, Lo
     
     List<HoldingRecord> findByInvestorId(Long investorId);
     
-    // Fix: Use @Query instead of derived query
     @Query("SELECT h FROM HoldingRecord h WHERE h.currentValue > :value")
     List<HoldingRecord> findByValueGreaterThan(@Param("value") Double value);
     
