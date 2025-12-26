@@ -19,18 +19,21 @@ public class AllocationRuleServiceImpl implements AllocationRuleService {
 
     @Override
     public AssetClassAllocationRule createRule(AssetClassAllocationRule rule) {
-        validatePercentage(rule.getTargetPercentage());
+        if (rule.getTargetPercentage() < 0 || rule.getTargetPercentage() > 100) {
+            throw new IllegalArgumentException("Target percentage must be between 0 and 100");
+        }
         return allocationRuleRepository.save(rule);
     }
 
     @Override
     public AssetClassAllocationRule updateRule(Long id, AssetClassAllocationRule updatedRule) {
-        AssetClassAllocationRule existing = allocationRuleRepository.findById(id)
+        return allocationRuleRepository.findById(id)
+                .map(rule -> {
+                    rule.setTargetPercentage(updatedRule.getTargetPercentage());
+                    rule.setActive(updatedRule.getActive());
+                    return allocationRuleRepository.save(rule);
+                })
                 .orElseThrow(() -> new ResourceNotFoundException("Allocation rule not found with id: " + id));
-        existing.setTargetPercentage(updatedRule.getTargetPercentage());
-        existing.setActive(updatedRule.getActive());
-        validatePercentage(existing.getTargetPercentage());
-        return allocationRuleRepository.save(existing);
     }
 
     @Override
@@ -47,17 +50,5 @@ public class AllocationRuleServiceImpl implements AllocationRuleService {
     public AssetClassAllocationRule getRuleById(Long id) {
         return allocationRuleRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Allocation rule not found with id: " + id));
-    }
-
-    @Override
-    public List<AssetClassAllocationRule> getAllRules() {
-        return allocationRuleRepository.findAll();
-    }
-
-    private void validatePercentage(Double percentage) {
-        if (rule.getTargetPercentage() < 0 || rule.getTargetPercentage() > 100) {
-    throw new IllegalArgumentException("Target percentage must be between 0 and 100");
-        }
-
     }
 }
