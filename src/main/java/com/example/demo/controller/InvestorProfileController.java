@@ -8,7 +8,8 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/investors")
 public class InvestorProfileController {
 
-    private final InvestorProfileService service;
+    private final InvestorProfileService investorProfileService;
+
 
     public InvestorProfileController(InvestorProfileService service) {
         this.service = service;
