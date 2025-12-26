@@ -22,7 +22,7 @@ public class AssetClassAllocationRule {
     public AssetClassAllocationRule() {
     }
 
-    // ✅ ADD THIS
+  
     public void setId(Long id) {
         this.id = id;
     }
