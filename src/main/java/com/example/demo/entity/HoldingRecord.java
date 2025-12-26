@@ -1,10 +1,17 @@
 package com.example.demo.entity;
 
-import com.example.demo.entity.enums.AssetClassType;
+import com.example.demo.entity.enums.AssetClass;
 import jakarta.persistence.*;
-import java.time.LocalDateTime;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class HoldingRecord {
 
     @Id
@@ -14,35 +21,7 @@ public class HoldingRecord {
     private Long investorId;
 
     @Enumerated(EnumType.STRING)
-    private AssetClassType assetClass;
+    private AssetClass assetClass;
 
     private double currentValue;
-
-public double getCurrentValue() {
-    return currentValue;
-}
-
-    private LocalDateTime snapshotDate;
-
-    public HoldingRecord() {}
-
-    public HoldingRecord(Long investorId,
-                         AssetClassType assetClass,
-                         Double currentValue,
-                         LocalDateTime snapshotDate) {
-        if (currentValue <= 0) {
-            throw new IllegalArgumentException("currentValue must be > 0");
-        }
-        this.investorId = investorId;
-        this.assetClass = assetClass;
-        this.currentValue = currentValue;
-        this.snapshotDate = snapshotDate;
-    }
-
-    public Long getId() { return id; }
-    public Long getInvestorId() { return investorId; }
-    public AssetClassType getAssetClass() { return assetClass; }
-    public Double getCurrentValue() { return currentValue; }
-
-    public void setId(Long id) { this.id = id; }
 }
