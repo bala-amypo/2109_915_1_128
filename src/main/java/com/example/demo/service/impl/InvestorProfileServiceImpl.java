@@ -9,41 +9,41 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 
-@Service   // 🔴 THIS IS CRITICAL
+@Service
 public class InvestorProfileServiceImpl implements InvestorProfileService {
 
-    private final InvestorProfileRepository repo;
+    private final InvestorProfileRepository repository;
 
-    public InvestorProfileServiceImpl(InvestorProfileRepository repo) {
-        this.repo = repo;
+    public InvestorProfileServiceImpl(InvestorProfileRepository repository) {
+        this.repository = repository;
     }
 
     @Override
     public InvestorProfile createInvestor(InvestorProfile investor) {
-        return repo.save(investor);
+        return repository.save(investor);
     }
 
     @Override
     public InvestorProfile getInvestorById(Long id) {
-        return repo.findById(id)
+        return repository.findById(id)
                 .orElseThrow(() ->
                         new ResourceNotFoundException("Investor not found " + id));
     }
 
     @Override
     public List<InvestorProfile> getAllInvestors() {
-        return repo.findAll();
+        return repository.findAll();
     }
 
     @Override
     public InvestorProfile updateInvestorStatus(Long id, boolean active) {
-        InvestorProfile inv = getInvestorById(id);
-        inv.setActive(active);
-        return repo.save(inv);
+        InvestorProfile investor = getInvestorById(id);
+        investor.setActive(active);
+        return repository.save(investor);
     }
 
     @Override
     public Optional<InvestorProfile> findByInvestorId(String investorId) {
-        return repo.findByInvestorId(investorId);
+        return repository.findByInvestorId(investorId);
     }
 }
