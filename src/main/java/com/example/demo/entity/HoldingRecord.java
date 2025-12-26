@@ -2,16 +2,8 @@ package com.example.demo.entity;
 
 import com.example.demo.entity.enums.AssetClass;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Entity
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
 public class HoldingRecord {
 
     @Id
@@ -24,4 +16,43 @@ public class HoldingRecord {
     private AssetClass assetClass;
 
     private double currentValue;
+
+    // ===== Constructors =====
+    public HoldingRecord() {
+    }
+
+    public HoldingRecord(Long investorId, AssetClass assetClass, double currentValue) {
+        this.investorId = investorId;
+        this.assetClass = assetClass;
+        this.currentValue = currentValue;
+    }
+
+    // ===== Getters & Setters =====
+    public Long getId() {
+        return id;
+    }
+
+    public Long getInvestorId() {
+        return investorId;
+    }
+
+    public void setInvestorId(Long investorId) {
+        this.investorId = investorId;
+    }
+
+    public AssetClass getAssetClass() {
+        return assetClass;
+    }
+
+    public void setAssetClass(AssetClass assetClass) {
+        this.assetClass = assetClass;
+    }
+
+    public double getCurrentValue() {
+        return currentValue;
+    }
+
+    public void setCurrentValue(double currentValue) {
+        this.currentValue = currentValue;
+    }
 }
