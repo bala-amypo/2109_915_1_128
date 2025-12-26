@@ -22,6 +22,11 @@ public class AssetClassAllocationRule {
     public AssetClassAllocationRule() {
     }
 
+    // ✅ ADD THIS
+    public void setId(Long id) {
+        this.id = id;
+    }
+
     public Long getId() {
         return id;
     }
@@ -47,6 +52,9 @@ public class AssetClassAllocationRule {
     }
 
     public void setTargetPercentage(double targetPercentage) {
+        if (targetPercentage < 0 || targetPercentage > 100) {
+            throw new IllegalArgumentException("Target percentage must be between 0 and 100");
+        }
         this.targetPercentage = targetPercentage;
     }
 
