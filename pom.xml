@@ -19,6 +19,7 @@
     
     <properties>
         <java.version>25</java.version>
+        <testng.version>7.10.2</testng.version>
     </properties>
     
     <dependencies>
@@ -57,16 +58,18 @@
             <version>2.5.0</version>
         </dependency>
         
-        <!-- Test dependencies - Let Spring Boot manage versions -->
+        <!-- Test dependencies -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
         
+        <!-- TestNG with explicit version -->
         <dependency>
             <groupId>org.testng</groupId>
             <artifactId>testng</artifactId>
+            <version>${testng.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
