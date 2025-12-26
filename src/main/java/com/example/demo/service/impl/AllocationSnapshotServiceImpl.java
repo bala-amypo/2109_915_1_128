@@ -2,76 +2,81 @@ package com.example.demo.service.impl;
 
 import com.example.demo.entity.*;
 import com.example.demo.entity.enums.AlertSeverity;
+import com.example.demo.entity.enums.AssetClassType;
 import com.example.demo.exception.ResourceNotFoundException;
 import com.example.demo.repository.*;
 import com.example.demo.service.AllocationSnapshotService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 public class AllocationSnapshotServiceImpl implements AllocationSnapshotService {
 
-    private final AllocationSnapshotRecordRepository snapshotRepo;
-    private final HoldingRecordRepository holdingRepo;
-    private final AssetClassAllocationRuleRepository ruleRepo;
-    private final RebalancingAlertRecordRepository alertRepo;
+    private final AllocationSnapshotRecordRepository snapshotRecordRepository;
+    private final HoldingRecordRepository holdingRecordRepository;
+    private final AssetClassAllocationRuleRepository allocationRuleRepository;
+    private final RebalancingAlertRecordRepository alertRecordRepository;
 
     public AllocationSnapshotServiceImpl(
-            AllocationSnapshotRecordRepository snapshotRepo,
-            HoldingRecordRepository holdingRepo,
-            AssetClassAllocationRuleRepository ruleRepo,
-            RebalancingAlertRecordRepository alertRepo) {
-        this.snapshotRepo = snapshotRepo;
-        this.holdingRepo = holdingRepo;
-        this.ruleRepo = ruleRepo;
-        this.alertRepo = alertRepo;
+            AllocationSnapshotRecordRepository snapshotRecordRepository,
+            HoldingRecordRepository holdingRecordRepository,
+            AssetClassAllocationRuleRepository allocationRuleRepository,
+            RebalancingAlertRecordRepository alertRecordRepository) {
+        this.snapshotRecordRepository = snapshotRecordRepository;
+        this.holdingRecordRepository = holdingRecordRepository;
+        this.allocationRuleRepository = allocationRuleRepository;
+        this.alertRecordRepository = alertRecordRepository;
     }
 
     @Override
     public AllocationSnapshotRecord computeSnapshot(Long investorId) {
-
-        List<HoldingRecord> holdings = holdingRepo.findByInvestorId(investorId);
+        List<HoldingRecord> holdings = holdingRecordRepository.findByInvestorId(investorId);
         if (holdings.isEmpty()) {
-            throw new IllegalArgumentException("No holdings");
+            throw new IllegalArgumentException("No holdings found for investor");
         }
 
-        double total = holdings.stream()
-                .mapToDouble(HoldingRecord::getCurrentValue)
-                .sum();
+        double totalValue = holdings.stream().mapToDouble(h -> h.getCurrentValue()).sum();
+        if (totalValue <= 0) {
+            throw new IllegalArgumentException("Total portfolio value must be > 0");
+        }
 
-        AllocationSnapshotRecord snapshot =
-                new AllocationSnapshotRecord(
-                        investorId,
-                        LocalDateTime.now(),
-                        total,
-                        "{}"
-                );
-
-        snapshotRepo.save(snapshot);
-
-        for (AssetClassAllocationRule rule :
-                ruleRepo.findByInvestorIdAndActiveTrue(investorId)) {
-
-            double classTotal = holdings.stream()
-                    .filter(h -> h.getAssetClass() == rule.getAssetClass())
-                    .mapToDouble(HoldingRecord::getCurrentValue)
-                    .sum();
-
-            double pct = (classTotal / total) * 100;
-
-            if (pct > rule.getTargetPercentage()) {
-                alertRepo.save(new RebalancingAlertRecord(
-                        investorId,
-                        rule.getAssetClass(),
-                        pct,
-                        rule.getTargetPercentage(),
-                        AlertSeverity.HIGH,
-                        "Rebalance required",
-                        LocalDateTime.now(),
-                        false
+        Map<AssetClassType, Double> allocationMap = holdings.stream()
+                .collect(Collectors.groupingBy(
+                    HoldingRecord::getAssetClass,
+                    Collectors.summingDouble(h -> h.getCurrentValue())
                 ));
+
+        ObjectMapper mapper = new ObjectMapper();
+        String allocationJson;
+        try {
+            allocationJson = mapper.writeValueAsString(allocationMap);
+        } catch (Exception e) {
+            allocationJson = "{}";
+        }
+
+        AllocationSnapshotRecord snapshot = new AllocationSnapshotRecord(
+                investorId, LocalDateTime.now(), totalValue, allocationJson
+        );
+        snapshotRecordRepository.save(snapshot);
+
+        // Check for rebalancing alerts
+        List<AssetClassAllocationRule> rules = allocationRuleRepository.findByInvestorIdAndActiveTrue(investorId);
+        for (AssetClassAllocationRule rule : rules) {
+            AssetClassType assetClass = rule.getAssetClass();
+            double currentValue = allocationMap.getOrDefault(assetClass, 0.0);
+            double currentPercentage = totalValue > 0 ? (currentValue / totalValue) * 100 : 0;
+            
+            if (currentPercentage > rule.getTargetPercentage()) {
+                RebalancingAlertRecord alert = new RebalancingAlertRecord(
+                        investorId, assetClass, currentPercentage, rule.getTargetPercentage(),
+                        AlertSeverity.MEDIUM, "Rebalancing needed", LocalDateTime.now(), false
+                );
+                alertRecordRepository.save(alert);
             }
         }
 
@@ -80,13 +85,17 @@ public class AllocationSnapshotServiceImpl implements AllocationSnapshotService 
 
     @Override
     public AllocationSnapshotRecord getSnapshotById(Long id) {
-        return snapshotRepo.findById(id)
-                .orElseThrow(() ->
-                        new ResourceNotFoundException("Snapshot not found " + id));
+        return snapshotRecordRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Snapshot not found with id: " + id));
+    }
+
+    @Override
+    public List<AllocationSnapshotRecord> getSnapshotsByInvestor(Long investorId) {
+        return snapshotRecordRepository.findByInvestorId(investorId);
     }
 
     @Override
     public List<AllocationSnapshotRecord> getAllSnapshots() {
-        return snapshotRepo.findAll();
+        return snapshotRecordRepository.findAll();
     }
 }

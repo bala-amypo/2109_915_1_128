@@ -12,38 +12,38 @@ import java.util.Optional;
 @Service
 public class InvestorProfileServiceImpl implements InvestorProfileService {
 
-    private final InvestorProfileRepository repository;
+    private final InvestorProfileRepository investorProfileRepository;
 
-    public InvestorProfileServiceImpl(InvestorProfileRepository repository) {
-        this.repository = repository;
+    public InvestorProfileServiceImpl(InvestorProfileRepository investorProfileRepository) {
+        this.investorProfileRepository = investorProfileRepository;
     }
 
     @Override
     public InvestorProfile createInvestor(InvestorProfile investor) {
-        return repository.save(investor);
+        investor.setActive(true); // Default active
+        return investorProfileRepository.save(investor);
     }
 
     @Override
     public InvestorProfile getInvestorById(Long id) {
-        return repository.findById(id)
-                .orElseThrow(() ->
-                        new ResourceNotFoundException("Investor not found " + id));
+        return investorProfileRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Investor not found with id: " + id));
     }
 
     @Override
     public List<InvestorProfile> getAllInvestors() {
-        return repository.findAll();
+        return investorProfileRepository.findAll();
     }
 
     @Override
     public InvestorProfile updateInvestorStatus(Long id, boolean active) {
         InvestorProfile investor = getInvestorById(id);
         investor.setActive(active);
-        return repository.save(investor);
+        return investorProfileRepository.save(investor);
     }
 
     @Override
     public Optional<InvestorProfile> findByInvestorId(String investorId) {
-        return repository.findByInvestorId(investorId);
+        return investorProfileRepository.findByInvestorId(investorId);
     }
 }

@@ -11,29 +11,32 @@ import java.util.Optional;
 @Service
 public class HoldingRecordServiceImpl implements HoldingRecordService {
 
-    private final HoldingRecordRepository repository;
+    private final HoldingRecordRepository holdingRecordRepository;
 
-    public HoldingRecordServiceImpl(HoldingRecordRepository repository) {
-        this.repository = repository;
+    public HoldingRecordServiceImpl(HoldingRecordRepository holdingRecordRepository) {
+        this.holdingRecordRepository = holdingRecordRepository;
     }
 
     @Override
     public HoldingRecord recordHolding(HoldingRecord holding) {
-        return repository.save(holding);
+        if (holding.getCurrentValue() == null || holding.getCurrentValue() <= 0) {
+            throw new IllegalArgumentException("currentValue must be > 0");
+        }
+        return holdingRecordRepository.save(holding);
     }
 
     @Override
     public List<HoldingRecord> getHoldingsByInvestor(Long investorId) {
-        return repository.findByInvestorId(investorId);
+        return holdingRecordRepository.findByInvestorId(investorId);
     }
 
     @Override
     public Optional<HoldingRecord> getHoldingById(Long id) {
-        return repository.findById(id);
+        return holdingRecordRepository.findById(id);
     }
 
     @Override
     public List<HoldingRecord> getAllHoldings() {
-        return repository.findAll();
+        return holdingRecordRepository.findAll();
     }
 }
