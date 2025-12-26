@@ -67,7 +67,8 @@ public class AllocationSnapshotServiceImpl implements AllocationSnapshotService 
         snapshotRecordRepository.save(snapshot);
 
         // Check for rebalancing alerts
-        List<AssetClassAllocationRule> rules = allocationRuleRepository.findByInvestorIdAndActiveTrue(investorId);
+        List<AssetClassAllocationRule> activeRules = allocationRuleRepository.findActiveRulesHql(investorId);
+
         for (AssetClassAllocationRule rule : rules) {
             AssetClassType assetClass = rule.getAssetClass();
             double currentValue = allocationMap.getOrDefault(assetClass, 0.0);
