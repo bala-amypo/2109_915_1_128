@@ -34,21 +34,22 @@ public class JwtTokenProvider {
     }
 
     public boolean validateToken(String token) {
-        try {
-            Jwts.parser()
-                    .setSigningKey(secret)
-                    .parseClaimsJws(token);
-            return true;
-        } catch (Exception ex) {
-            return false;
-        }
-    }
-
-    public String getUsernameFromToken(String token) {
-        Claims claims = Jwts.parser()
+    try {
+        Jwts.parser()
                 .setSigningKey(secret)
-                .parseClaimsJws(token)
-                .getBody();
-        return claims.getSubject();
+                .parseClaimsJws(token);
+        return true;
+    } catch (Exception ex) {
+        return false;
     }
+}
+
+public String getUsernameFromToken(String token) {
+    Claims claims = Jwts.parser()
+            .setSigningKey(secret)
+            .parseClaimsJws(token)
+            .getBody();
+    return claims.getSubject();
+}
+
 }
