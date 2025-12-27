@@ -19,7 +19,7 @@ public class HoldingRecord {
     private AssetClassType assetClass;
 
     @Column(nullable = false)
-    private Double value;
+    private Double currentValue;
 
     @Column(nullable = false)
     private LocalDateTime snapshotDate;
@@ -53,12 +53,10 @@ public class HoldingRecord {
         this.assetClass = assetClass;
     }
 
-    public Double getValue() {
-        return value;
-    }
+  public Double getCurrentValue() { return currentValue; }
 
-    public void setValue(Double value) {
-        this.value = value;
+    public void setValue(Double currentValue) {
+        this.currentValue = currentValue;
     }
 
     public LocalDateTime getSnapshotDate() {
