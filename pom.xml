@@ -26,6 +26,11 @@
 
     <dependencies>
 
+        <dependency>
+            <groupId>jakarta.xml.bind</groupId>
+            <artifactId>jakarta.xml.bind-api</artifactId>
+        </dependency>
+
         <!-- ================= Spring Boot ================= -->
 
         <dependency>
