@@ -4,9 +4,11 @@ import com.example.demo.entity.RebalancingAlertRecord;
 import com.example.demo.exception.ResourceNotFoundException;
 import com.example.demo.repository.RebalancingAlertRecordRepository;
 import com.example.demo.service.RebalancingAlertService;
+import org.springframework.stereotype.Service;   // ✅ ADD THIS
 
 import java.util.List;
 
+@Service   // ✅ ADD THIS
 public class RebalancingAlertServiceImpl implements RebalancingAlertService {
 
     private final RebalancingAlertRecordRepository repository;
