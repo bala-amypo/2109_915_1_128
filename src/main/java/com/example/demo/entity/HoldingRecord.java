@@ -22,7 +22,7 @@ public class HoldingRecord {
     private Double currentValue;
 
     @Column(nullable = false)
-    private LocalDateTime snapshotDate;
+    private LocalDateTime valuationDate;
 
     public HoldingRecord() {}
     public HoldingRecord(
