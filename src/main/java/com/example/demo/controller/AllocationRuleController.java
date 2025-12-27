@@ -1,17 +1,45 @@
-package com.example.demo.service;
+package com.example.demo.controller;
 
 import com.example.demo.entity.AssetClassAllocationRule;
+import com.example.demo.service.AllocationRuleService;
+import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 
-public interface AllocationRuleService {
+@RestController
+@RequestMapping("/api/allocation-rules")
+public class AllocationRuleController {
 
-    AssetClassAllocationRule createRule(AssetClassAllocationRule rule);
+    private final AllocationRuleService allocationRuleService;
 
-    AssetClassAllocationRule updateRule(Long id, AssetClassAllocationRule rule);
+    public AllocationRuleController(AllocationRuleService allocationRuleService) {
+        this.allocationRuleService = allocationRuleService;
+    }
 
-    AssetClassAllocationRule getRuleById(Long id);
+    @PostMapping
+    public AssetClassAllocationRule create(@RequestBody AssetClassAllocationRule rule) {
+        return allocationRuleService.createRule(rule);
+    }
 
-    List<AssetClassAllocationRule> getRulesByInvestor(Long investorId);
+    @PutMapping("/{id}")
+    public AssetClassAllocationRule update(
+            @PathVariable Long id,
+            @RequestBody AssetClassAllocationRule rule) {
+        return allocationRuleService.updateRule(id, rule);
+    }
 
-    List<AssetClassAllocationRule> getActiveRules(Long investorId);
+    @GetMapping("/{id}")
+    public AssetClassAllocationRule getById(@PathVariable Long id) {
+        return allocationRuleService.getRuleById(id);
+    }
+
+    @GetMapping("/investor/{investorId}")
+    public List<AssetClassAllocationRule> getByInvestor(@PathVariable Long investorId) {
+        return allocationRuleService.getRulesByInvestor(investorId);
+    }
+
+    @GetMapping("/active/{investorId}")
+    public List<AssetClassAllocationRule> getActive(@PathVariable Long investorId) {
+        return allocationRuleService.getActiveRules(investorId);
+    }
 }
