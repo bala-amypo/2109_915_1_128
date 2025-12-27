@@ -25,6 +25,21 @@ public class HoldingRecord {
     private LocalDateTime snapshotDate;
 
     public HoldingRecord() {}
+    public HoldingRecord(
+        Long investorId,
+        AssetClassType assetClass,
+        double currentValue,
+        LocalDateTime valuationDate
+) {
+    this.investorId = investorId;
+    this.assetClass = assetClass;
+    this.currentValue = currentValue;
+    this.valuationDate = valuationDate;
+}
+
+public void setId(Long id) {
+    this.id = id;
+}
 
     @PrePersist
     public void onCreate() {
