@@ -4,11 +4,14 @@ import com.example.demo.entity.AssetClassAllocationRule;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+
 import java.util.List;
 
 public interface AssetClassAllocationRuleRepository extends JpaRepository<AssetClassAllocationRule, Long> {
+
     List<AssetClassAllocationRule> findByInvestorId(Long investorId);
-    
+
+    // EXACT name and signature expected by tests
     @Query("SELECT r FROM AssetClassAllocationRule r WHERE r.investorId = :investorId AND r.active = true")
     List<AssetClassAllocationRule> findActiveRulesHql(@Param("investorId") Long investorId);
 }
