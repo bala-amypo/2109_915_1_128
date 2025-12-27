@@ -1,6 +1,6 @@
 package com.example.demo.config;
 
-import com.example.demo.security.JwtTokenProvider;
+import com.example.demo.config.JwtTokenProvider;
 import com.example.demo.security.JwtAuthenticationFilter;
 import com.example.demo.security.CustomUserDetailsService;
 import org.springframework.context.annotation.Bean;

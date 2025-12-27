@@ -42,11 +42,12 @@ public class AuthController {
 
         String token = jwtTokenProvider.generateToken(authentication, user);
 
-        AuthResponse response = new AuthResponse();
-        response.setToken(token);
-        response.setUserId(user.getId());
-        response.setEmail(user.getEmail());
-        response.setRole(user.getRole().name());
+        AuthResponse response = new AuthResponse(
+                token,
+                user.getId(),
+                user.getEmail(),
+                user.getRole().name()
+        );
 
         return ResponseEntity.ok(response);
     }
