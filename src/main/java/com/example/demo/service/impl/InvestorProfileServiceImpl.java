@@ -4,10 +4,12 @@ import com.example.demo.entity.InvestorProfile;
 import com.example.demo.exception.ResourceNotFoundException;
 import com.example.demo.repository.InvestorProfileRepository;
 import com.example.demo.service.InvestorProfileService;
+import org.springframework.stereotype.Service;   // ✅ ADD THIS
 
 import java.util.List;
 import java.util.Optional;
 
+@Service   // ✅ ADD THIS
 public class InvestorProfileServiceImpl implements InvestorProfileService {
 
     private final InvestorProfileRepository repository;
