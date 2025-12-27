@@ -1,6 +1,6 @@
 package com.example.demo.entity;
 
-import javax.persistence.*;
+import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import com.example.demo.entity.enums.AssetClassType;
 import com.example.demo.entity.enums.AlertSeverity;
