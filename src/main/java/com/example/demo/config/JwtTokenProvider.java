@@ -47,10 +47,12 @@ public class JwtTokenProvider {
     }
 
     public String getUsernameFromToken(String token) {
-        Claims claims = Jwts.parser()           
-                .setSigningKey(secret)
-                .parseClaimsJws(token)           
-                .getBody();
+        // getUsernameFromToken
+        Claims claims = Jwts.parser()
+            .setSigningKey(secret)
+            .parseClaimsJws(token)
+            .getBody();
+
         return claims.getSubject();
     }
 }
