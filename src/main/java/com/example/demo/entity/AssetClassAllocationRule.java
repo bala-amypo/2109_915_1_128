@@ -1,6 +1,7 @@
 package com.example.demo.entity;
-import jakarta.persistence.*;
+
 import com.example.demo.entity.enums.AssetClassType;
+import jakarta.persistence.*;
 
 @Entity
 public class AssetClassAllocationRule {
@@ -9,41 +10,23 @@ public class AssetClassAllocationRule {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
     private Long investorId;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
     private AssetClassType assetClass;
 
-    @Column(nullable = false)
-    private Double targetPercentage;
+    private double targetPercentage;
 
-    @Column(nullable = false)
-    private Boolean active = true;
+    private boolean active;
 
-    public AssetClassAllocationRule() {}
-    public AssetClassAllocationRule(
-        Long investorId,
-        AssetClassType assetClass,
-        double targetPercentage,
-        boolean active
-) {
-    this.investorId = investorId;
-    this.assetClass = assetClass;
-    this.targetPercentage = targetPercentage;
-    this.active = active;
-}
-
-
-    // Getters and setters
-    public void setId(Long id) {
-    this.id = id;
-}
-
+    // ===== REQUIRED GETTERS / SETTERS =====
 
     public Long getId() {
         return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public Long getInvestorId() {
@@ -62,19 +45,19 @@ public class AssetClassAllocationRule {
         this.assetClass = assetClass;
     }
 
-    public Double getTargetPercentage() {
+    public double getTargetPercentage() {
         return targetPercentage;
     }
 
-    public void setTargetPercentage(Double targetPercentage) {
+    public void setTargetPercentage(double targetPercentage) {
         this.targetPercentage = targetPercentage;
     }
 
-    public Boolean getActive() {
+    public boolean isActive() {
         return active;
     }
 
-    public void setActive(Boolean active) {
+    public void setActive(boolean active) {
         this.active = active;
     }
 }
