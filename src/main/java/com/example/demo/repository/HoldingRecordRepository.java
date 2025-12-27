@@ -7,12 +7,13 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface HoldingRecordRepository extends JpaRepository<HoldingRecord, Long> {
-
+    List<HoldingRecord> findByInvestorIdAndAssetClass(
+        Long investorId,
+        AssetClassType assetClass
+);
     List<HoldingRecord> findByInvestorId(Long investorId);
 
     // REQUIRED BY TEST: testHqlHoldingsByValueQuery
     List<HoldingRecord> findByValueGreaterThan(Double value);
 
-    // REQUIRED BY TEST: testHqlHoldingsByAssetClassQuery
-    List<HoldingRecord> findByInvestorAndAssetClass(Long investorId, AssetClassType assetClass);
 }
