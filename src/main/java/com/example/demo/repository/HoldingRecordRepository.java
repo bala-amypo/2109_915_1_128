@@ -14,6 +14,8 @@ public interface HoldingRecordRepository extends JpaRepository<HoldingRecord, Lo
     List<HoldingRecord> findByInvestorId(Long investorId);
 
     // REQUIRED BY TEST: testHqlHoldingsByValueQuery
-    List<HoldingRecord> findByValueGreaterThan(Double value);
+    List<HoldingRecord> findByCurrentValueGreaterThan(Double value);
+
+    
 
 }
