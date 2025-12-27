@@ -11,23 +11,21 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
-
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
 
-    private final AuthenticationManager authenticationManager;
     private final JwtTokenProvider jwtTokenProvider;
-    private final UserAccountService userAccountService;
 
-    public AuthController(AuthenticationManager authenticationManager, 
+    public AuthController(JwtTokenProvider jwtTokenProvider /*, other deps */) {
+        
                          JwtTokenProvider jwtTokenProvider, 
                          UserAccountService userAccountService) {
         this.authenticationManager = authenticationManager;
         this.jwtTokenProvider = jwtTokenProvider;
         this.userAccountService = userAccountService;
     }
-
+}
     @PostMapping("/login")
     public ResponseEntity<AuthResponse> login(@RequestBody AuthRequest request) {
         Authentication authentication = authenticationManager.authenticate(
