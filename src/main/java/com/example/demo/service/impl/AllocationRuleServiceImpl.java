@@ -19,25 +19,24 @@ public class AllocationRuleServiceImpl implements AllocationRuleService {
 
     @Override
     public AssetClassAllocationRule createRule(AssetClassAllocationRule rule) {
+        validatePercentage(rule.getTargetPercentage());
         return repository.save(rule);
     }
 
     @Override
-    public AssetClassAllocationRule updateRule(Long id, AssetClassAllocationRule rule) {
-        AssetClassAllocationRule existing = repository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Rule not found: " + id));
+    public AssetClassAllocationRule updateRule(Long id, AssetClassAllocationRule updatedRule) {
+        AssetClassAllocationRule existing =
+                repository.findById(id)
+                        .orElseThrow(() ->
+                                new ResourceNotFoundException("Allocation rule not found with id " + id));
 
-        existing.setAssetClass(rule.getAssetClass());
-        existing.setTargetPercentage(rule.getTargetPercentage());
-        existing.setActive(rule.isActive());
+        validatePercentage(updatedRule.getTargetPercentage());
+
+        existing.setAssetClass(updatedRule.getAssetClass());
+        existing.setTargetPercentage(updatedRule.getTargetPercentage());
+        existing.setActive(updatedRule.getActive());
 
         return repository.save(existing);
-    }
-
-    @Override
-    public AssetClassAllocationRule getRuleById(Long id) {
-        return repository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Rule not found: " + id));
     }
 
     @Override
@@ -47,6 +46,19 @@ public class AllocationRuleServiceImpl implements AllocationRuleService {
 
     @Override
     public List<AssetClassAllocationRule> getActiveRules(Long investorId) {
-        return repository.findByInvestorIdAndActiveTrue(investorId);
+        return repository.findActiveRulesHql(investorId);
+    }
+
+    @Override
+    public AssetClassAllocationRule getRuleById(Long id) {
+        return repository.findById(id)
+                .orElseThrow(() ->
+                        new ResourceNotFoundException("Allocation rule not found with id " + id));
+    }
+
+    private void validatePercentage(Double value) {
+        if (value == null || value < 0 || value > 100) {
+            throw new IllegalArgumentException("targetPercentage must be between 0 and 100");
+        }
     }
 }
