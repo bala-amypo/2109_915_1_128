@@ -3,6 +3,7 @@ package com.example.demo.controller;
 import com.example.demo.config.JwtTokenProvider;
 import com.example.demo.entity.UserAccount;
 import com.example.demo.repository.UserAccountRepository;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -17,35 +18,63 @@ public class AuthController {
 
     private final AuthenticationManager authenticationManager;
     private final JwtTokenProvider jwtTokenProvider;
-    private final UserAccountRepository userRepo;
+    private final UserAccountRepository userAccountRepository;
 
     public AuthController(
             AuthenticationManager authenticationManager,
             JwtTokenProvider jwtTokenProvider,
-            UserAccountRepository userRepo
+            UserAccountRepository userAccountRepository
     ) {
         this.authenticationManager = authenticationManager;
         this.jwtTokenProvider = jwtTokenProvider;
-        this.userRepo = userRepo;
+        this.userAccountRepository = userAccountRepository;
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(
-            @RequestParam String email,
-            @RequestParam String password
-    ) {
+    public ResponseEntity<?> login(@Valid @RequestBody LoginRequest request) {
+
         Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(email, password)
+                new UsernamePasswordAuthenticationToken(
+                        request.getEmail(),
+                        request.getPassword()
+                )
         );
 
-        UserAccount user = userRepo.findByEmail(email)
+        // ✅ MUST use username string, NOT Authentication object
+        String username = authentication.getName();
+
+        UserAccount user = userAccountRepository.findByEmail(username)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
-        String token = jwtTokenProvider.generateToken(
-                authentication.getName(),
-                user.getId()
-        );
+        String token = jwtTokenProvider.generateToken(username, user.getId());
 
-        return ResponseEntity.ok(Map.of("token", token));
+        return ResponseEntity.ok(Map.of(
+                "token", token,
+                "userId", user.getId(),
+                "email", user.getEmail()
+        ));
+    }
+
+    // ===== DTO =====
+    public static class LoginRequest {
+
+        private String email;
+        private String password;
+
+        public String getEmail() {
+            return email;
+        }
+
+        public void setEmail(String email) {
+            this.email = email;
+        }
+
+        public String getPassword() {
+            return password;
+        }
+
+        public void setPassword(String password) {
+            this.password = password;
+        }
     }
 }
