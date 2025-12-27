@@ -32,7 +32,7 @@ public class InvestorProfile {
 
     public InvestorProfile() {}
 
-    // REQUIRED BY TESTS
+   
     public InvestorProfile(String investorId, String fullName, String email, Boolean active) {
         this.investorId = investorId;
         this.fullName = fullName;
