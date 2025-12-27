@@ -4,10 +4,12 @@ import com.example.demo.entity.*;
 import com.example.demo.entity.enums.AlertSeverity;
 import com.example.demo.repository.*;
 import com.example.demo.service.AllocationSnapshotService;
+import org.springframework.stereotype.Service;   // ✅ ADD THIS
 
 import java.time.LocalDateTime;
 import java.util.*;
 
+@Service   // ✅ ADD THIS
 public class AllocationSnapshotServiceImpl implements AllocationSnapshotService {
 
     private final AllocationSnapshotRecordRepository snapshotRepo;
