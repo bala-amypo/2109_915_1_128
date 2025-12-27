@@ -6,9 +6,11 @@ import java.util.List;
 
 public interface AllocationRuleService {
 
-    AssetClassAllocationRule createRule(AssetClassAllocationRule rule);
+    AssetClassAllocationRule saveRule(AssetClassAllocationRule rule);
 
-    AssetClassAllocationRule updateRule(Long id, AssetClassAllocationRule rule);
+    List<AssetClassAllocationRule> getAllRules();
 
-    List<AssetClassAllocationRule> getRulesByInvestor(Long investorId);
+    AssetClassAllocationRule getRuleById(Long id);
+
+    void deleteRule(Long id);
 }

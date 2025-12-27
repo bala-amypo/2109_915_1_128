@@ -1,12 +1,13 @@
 package com.example.demo.service.impl;
 
 import com.example.demo.entity.AssetClassAllocationRule;
-import com.example.demo.exception.ResourceNotFoundException;
 import com.example.demo.repository.AssetClassAllocationRuleRepository;
 import com.example.demo.service.AllocationRuleService;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Service   // ⭐⭐⭐ THIS ANNOTATION IS REQUIRED
 public class AllocationRuleServiceImpl implements AllocationRuleService {
 
     private final AssetClassAllocationRuleRepository repository;
@@ -16,29 +17,23 @@ public class AllocationRuleServiceImpl implements AllocationRuleService {
     }
 
     @Override
-    public AssetClassAllocationRule createRule(AssetClassAllocationRule rule) {
-        validatePercentage(rule.getTargetPercentage());
+    public AssetClassAllocationRule saveRule(AssetClassAllocationRule rule) {
         return repository.save(rule);
     }
 
     @Override
-    public AssetClassAllocationRule updateRule(Long id, AssetClassAllocationRule rule) {
-        AssetClassAllocationRule existing = repository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Rule not found with id " + id));
-
-        validatePercentage(rule.getTargetPercentage());
-        existing.setTargetPercentage(rule.getTargetPercentage());
-        return repository.save(existing);
+    public List<AssetClassAllocationRule> getAllRules() {
+        return repository.findAll();
     }
 
     @Override
-    public List<AssetClassAllocationRule> getRulesByInvestor(Long investorId) {
-        return repository.findByInvestorId(investorId);
+    public AssetClassAllocationRule getRuleById(Long id) {
+        return repository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Rule not found"));
     }
 
-    private void validatePercentage(Double value) {
-        if (value < 0 || value > 100) {
-            throw new IllegalArgumentException("Percentage must be between 0 and 100");
-        }
+    @Override
+    public void deleteRule(Long id) {
+        repository.deleteById(id);
     }
 }
