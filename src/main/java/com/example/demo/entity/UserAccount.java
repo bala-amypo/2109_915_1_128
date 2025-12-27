@@ -27,6 +27,18 @@ public class UserAccount {
     private Boolean active = true;
 
     public UserAccount() {}
+    public UserAccount(
+        String username,
+        String email,
+        String password,
+        RoleType role
+) {
+    this.username = username;
+    this.email = email;
+    this.password = password;
+    this.role = role;
+}
+
 
     // Getters and setters
 

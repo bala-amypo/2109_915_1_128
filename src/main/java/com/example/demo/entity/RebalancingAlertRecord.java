@@ -39,6 +39,26 @@ public class RebalancingAlertRecord {
     private Boolean resolved = false;
 
     public RebalancingAlertRecord() {}
+    public RebalancingAlertRecord(
+        Long investorId,
+        AssetClassType assetClass,
+        double currentPercentage,
+        Double targetPercentage,
+        AlertSeverity severity,
+        String message,
+        LocalDateTime createdAt,
+        boolean resolved
+) {
+    this.investorId = investorId;
+    this.assetClass = assetClass;
+    this.currentPercentage = currentPercentage;
+    this.targetPercentage = targetPercentage;
+    this.severity = severity;
+    this.message = message;
+    this.createdAt = createdAt;
+    this.resolved = resolved;
+}
+
 
     @PrePersist
     public void onCreate() {

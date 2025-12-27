@@ -21,15 +21,21 @@ public class AllocationSnapshotRecord {
 
     @Column(nullable = false, columnDefinition = "TEXT")
     private String allocationJson;
-    new AllocationSnapshotRecord(
-    investorId,
-    LocalDateTime.now(),
-    totalValue,
-    allocationJson
-);
+    
 
     public AllocationSnapshotRecord() {}
-     public AllocationSnapshotRecord(investorId,LocalDateTime.now(),totalValue,allocationJson) {}
+    public AllocationSnapshotRecord(
+        Long investorId,
+        LocalDateTime snapshotDate,
+        double totalPortfolioValue,
+        String allocationJson
+) {
+    this.investorId = investorId;
+    this.snapshotDate = snapshotDate;
+    this.totalPortfolioValue = totalPortfolioValue;
+    this.allocationJson = allocationJson;
+}
+
 
     @PrePersist
     public void onCreate() {
