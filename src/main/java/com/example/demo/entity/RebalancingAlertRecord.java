@@ -55,7 +55,7 @@ public class RebalancingAlertRecord {
     this.targetPercentage = targetPercentage;
     this.severity = severity;
     this.message = message;
-    this.createdAt = createdAt;
+    alertDate = createdAt;
     this.resolved = resolved;
 }
 
