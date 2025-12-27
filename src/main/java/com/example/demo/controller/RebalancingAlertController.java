@@ -2,7 +2,6 @@ package com.example.demo.controller;
 
 import com.example.demo.entity.RebalancingAlertRecord;
 import com.example.demo.service.RebalancingAlertService;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -11,38 +10,24 @@ import java.util.List;
 @RequestMapping("/api/alerts")
 public class RebalancingAlertController {
 
-    private final RebalancingAlertService rebalancingAlertService;
+    private final RebalancingAlertService service;
 
-    public RebalancingAlertController(RebalancingAlertService rebalancingAlertService) {
-        this.rebalancingAlertService = rebalancingAlertService;
+    public RebalancingAlertController(RebalancingAlertService service) {
+        this.service = service;
     }
 
     @PostMapping
-    public ResponseEntity<RebalancingAlertRecord> create(@RequestBody RebalancingAlertRecord alert) {
-        return ResponseEntity.ok(rebalancingAlertService.createAlert(alert));
+    public RebalancingAlertRecord create(@RequestBody RebalancingAlertRecord alert) {
+        return service.createAlert(alert);
     }
 
     @PutMapping("/{id}/resolve")
-    public ResponseEntity<RebalancingAlertRecord> resolve(@PathVariable Long id) {
-        return ResponseEntity.ok(rebalancingAlertService.resolveAlert(id));
+    public RebalancingAlertRecord resolve(@PathVariable Long id) {
+        return service.resolveAlert(id);
     }
 
     @GetMapping("/investor/{investorId}")
-    public ResponseEntity<List<RebalancingAlertRecord>> getByInvestor(@PathVariable Long investorId) {
-        return ResponseEntity.ok(rebalancingAlertService.getAlertsByInvestor(investorId));
-    }
-
-    @GetMapping("/{id}")
-    public ResponseEntity<RebalancingAlertRecord> getById(@PathVariable Long id) {
-        try {
-            return ResponseEntity.ok(rebalancingAlertService.getAlertById(id));
-        } catch (Exception e) {
-            return ResponseEntity.notFound().build();
-        }
-    }
-
-    @GetMapping
-    public ResponseEntity<List<RebalancingAlertRecord>> getAll() {
-        return ResponseEntity.ok(rebalancingAlertService.getAllAlerts());
+    public List<RebalancingAlertRecord> getByInvestor(@PathVariable Long investorId) {
+        return service.getAlertsByInvestor(investorId);
     }
 }

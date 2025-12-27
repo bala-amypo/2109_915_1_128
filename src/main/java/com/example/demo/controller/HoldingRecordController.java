@@ -2,7 +2,6 @@ package com.example.demo.controller;
 
 import com.example.demo.entity.HoldingRecord;
 import com.example.demo.service.HoldingRecordService;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -11,31 +10,24 @@ import java.util.List;
 @RequestMapping("/api/holdings")
 public class HoldingRecordController {
 
-    private final HoldingRecordService holdingRecordService;
+    private final HoldingRecordService service;
 
-    public HoldingRecordController(HoldingRecordService holdingRecordService) {
-        this.holdingRecordService = holdingRecordService;
+    public HoldingRecordController(HoldingRecordService service) {
+        this.service = service;
     }
 
     @PostMapping
-    public ResponseEntity<HoldingRecord> create(@RequestBody HoldingRecord holding) {
-        return ResponseEntity.ok(holdingRecordService.recordHolding(holding));
+    public HoldingRecord create(@RequestBody HoldingRecord holding) {
+        return service.recordHolding(holding);
     }
 
     @GetMapping("/investor/{investorId}")
-    public ResponseEntity<List<HoldingRecord>> getByInvestor(@PathVariable Long investorId) {
-        return ResponseEntity.ok(holdingRecordService.getHoldingsByInvestor(investorId));
+    public List<HoldingRecord> getByInvestor(@PathVariable Long investorId) {
+        return service.getHoldingsByInvestor(investorId);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<HoldingRecord> getById(@PathVariable Long id) {
-        return holdingRecordService.getHoldingById(id)
-            .map(ResponseEntity::ok)
-            .orElse(ResponseEntity.notFound().build());
-    }
-
-    @GetMapping
-    public ResponseEntity<List<HoldingRecord>> getAll() {
-        return ResponseEntity.ok(holdingRecordService.getAllHoldings());
+    public HoldingRecord getById(@PathVariable Long id) {
+        return service.getHoldingById(id).orElse(null);
     }
 }

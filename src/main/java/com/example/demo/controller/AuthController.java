@@ -4,8 +4,8 @@ import com.example.demo.config.JwtTokenProvider;
 import com.example.demo.dto.AuthRequest;
 import com.example.demo.dto.AuthResponse;
 import com.example.demo.entity.UserAccount;
+import com.example.demo.entity.enums.RoleType;
 import com.example.demo.repository.UserAccountRepository;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -16,39 +16,47 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/auth")
 public class AuthController {
 
-    private final AuthenticationManager authenticationManager;
-    private final UserAccountRepository userAccountRepository;
+    private final UserAccountRepository userRepo;
     private final PasswordEncoder passwordEncoder;
+    private final AuthenticationManager authenticationManager;
     private final JwtTokenProvider jwtTokenProvider;
 
-    public AuthController(AuthenticationManager authenticationManager,
-                          UserAccountRepository userAccountRepository,
+    public AuthController(UserAccountRepository userRepo,
                           PasswordEncoder passwordEncoder,
+                          AuthenticationManager authenticationManager,
                           JwtTokenProvider jwtTokenProvider) {
-        this.authenticationManager = authenticationManager;
-        this.userAccountRepository = userAccountRepository;
+        this.userRepo = userRepo;
         this.passwordEncoder = passwordEncoder;
+        this.authenticationManager = authenticationManager;
         this.jwtTokenProvider = jwtTokenProvider;
     }
 
+    @PostMapping("/register")
+    public UserAccount register(@RequestBody UserAccount user) {
+        user.setRole(user.getRole() == null ? RoleType.INVESTOR : user.getRole());
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        return userRepo.save(user);
+    }
+
     @PostMapping("/login")
-    public ResponseEntity<AuthResponse> login(@RequestBody AuthRequest request) {
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())
+    public AuthResponse login(@RequestBody AuthRequest request) {
+
+        Authentication auth = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                        request.getEmail(),
+                        request.getPassword()
+                )
         );
 
-        UserAccount user = userAccountRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new RuntimeException("User not found"));
+        UserAccount user = userRepo.findByEmail(request.getEmail()).orElseThrow();
 
-        String token = jwtTokenProvider.generateToken(authentication, user);
+        String token = jwtTokenProvider.generateToken(auth, user);
 
-        AuthResponse response = new AuthResponse(
+        return new AuthResponse(
                 token,
                 user.getId(),
                 user.getEmail(),
                 user.getRole().name()
         );
-
-        return ResponseEntity.ok(response);
     }
 }
