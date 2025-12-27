@@ -43,7 +43,7 @@ public void setId(Long id) {
 
     @PrePersist
     public void onCreate() {
-        this.snapshotDate = LocalDateTime.now();
+        this.valuationDate = LocalDateTime.now();
     }
 
     // Getters and setters
@@ -75,6 +75,6 @@ public void setId(Long id) {
     }
 
     public LocalDateTime getSnapshotDate() {
-        return snapshotDate;
+        return valuationDate;
     }
 }
