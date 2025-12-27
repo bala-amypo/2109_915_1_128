@@ -4,16 +4,17 @@ import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.stereotype.Component;
 
-import java.security.Key;
+import javax.crypto.SecretKey;
 import java.util.Date;
 
 @Component
 public class JwtTokenProvider {
 
-    private final Key key;
+    private final SecretKey key;
     private final long validityInMs = 3600000; // 1 hour
 
     public JwtTokenProvider() {
+        // Secure 256-bit key (TESTS REQUIRE THIS)
         this.key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
     }
 
@@ -33,28 +34,23 @@ public class JwtTokenProvider {
     }
 
     public String getUsernameFromToken(String token) {
-        return getClaims(token).getSubject();
-    }
-
-    public Long getUserIdFromToken(String token) {
-        Object id = getClaims(token).get("userId");
-        return id == null ? null : Long.valueOf(id.toString());
-    }
-
-    public boolean validateToken(String token) {
-        try {
-            getClaims(token);
-            return true;
-        } catch (JwtException | IllegalArgumentException e) {
-            return false;
-        }
-    }
-
-    private Claims getClaims(String token) {
         return Jwts.parserBuilder()
                 .setSigningKey(key)
                 .build()
                 .parseClaimsJws(token)
-                .getBody();
+                .getBody()
+                .getSubject();
+    }
+
+    public boolean validateToken(String token) {
+        try {
+            Jwts.parserBuilder()
+                    .setSigningKey(key)
+                    .build()
+                    .parseClaimsJws(token);
+            return true;
+        } catch (JwtException | IllegalArgumentException ex) {
+            return false;
+        }
     }
 }
