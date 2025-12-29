@@ -24,14 +24,14 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
-    // ✅ THIS FIXES SWAGGER LOGIN LOOP
+    
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
         http
             .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(auth -> auth
-                // 🔓 Allow Swagger & Auth APIs
+                
                 .requestMatchers(
                     "/swagger-ui/**",
                     "/v3/api-docs/**",
@@ -40,7 +40,7 @@ public class SecurityConfig {
                     "/h2-console/**"
                 ).permitAll()
 
-                // 🔐 Secure everything else
+                
                 .anyRequest().authenticated()
             )
             
