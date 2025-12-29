@@ -37,23 +37,23 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
         http
-            // 🔴 Disable CSRF for REST APIs
+            
             .csrf(csrf -> csrf.disable())
 
-            // 🔴 Stateless because JWT
+            
             .sessionManagement(session ->
                 session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             )
 
             .authorizeHttpRequests(auth -> auth
-                // ✅ Swagger
+                
                 .requestMatchers(
                     "/swagger-ui/**",
                     "/v3/api-docs/**",
                     "/swagger-ui.html"
                 ).permitAll()
 
-                // ✅ Auth endpoints
+                
                 .requestMatchers("/api/auth/**").permitAll()
 
                 
