@@ -30,17 +30,17 @@ public class SecurityConfig {
         http
             .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(auth -> auth
-                // ✅ Swagger
+    
                 .requestMatchers(
                         "/swagger-ui/**",
                         "/v3/api-docs/**",
                         "/swagger-ui.html"
                 ).permitAll()
 
-                // ✅ Auth endpoints
+                
                 .requestMatchers("/auth/**").permitAll()
 
-                // ✅ INVESTOR + CORE APIs (VERY IMPORTANT)
+                
                 .requestMatchers(
                         "/api/investors/**",
                         "/api/allocations/**",
@@ -49,7 +49,7 @@ public class SecurityConfig {
                         "/api/rules/**"
                 ).permitAll()
 
-                // ❗ Everything else allowed (test-safe)
+                
                 .anyRequest().permitAll()
             )
             .httpBasic();
